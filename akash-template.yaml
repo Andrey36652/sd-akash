@@ -1,0 +1,46 @@
+---
+version: "2.0"
+services:
+  app:
+    image: debian:12
+    expose:
+      - port: 8090
+        as: 80
+        to:
+          - global: true
+    command:
+      - bash
+      - "-c"
+      - "apt-get update && apt-get install wget -y && cd ~ && wget https://raw.githubusercontent.com/Andrey36652/sd-akash/main/install-and-run.sh && source install-and-run.sh"
+profiles:
+  compute:
+    app:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 24Gi
+        storage:
+          - size: 60Gi
+        gpu:
+          units: 1
+          attributes:
+            vendor:
+              nvidia:
+                #- model: rtx3090
+                #- model: rtx4090
+                #- model: rtx3080
+                #- model: rtx3070
+                #- model: rtx3060
+                #- model: rtx3060ti
+  placement:
+    akash:
+      pricing:
+        app:
+          denom: uakt
+          amount: 1000000
+deployment:
+  app:
+    akash:
+      profile: app
+      count: 1
